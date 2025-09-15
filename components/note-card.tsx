@@ -7,9 +7,9 @@ import { PlusIcon as PushPin, Pencil, Trash2 } from "lucide-react"
 import type { Note } from "@/hooks/use-notes"
 
 const colorPool = [
-  "bg-sky-100 text-slate-900", // primary tint
-  "bg-amber-100 text-slate-900", // accent 1 tint
-  "bg-emerald-100 text-slate-900", // accent 2 tint
+  "bg-sky-100 text-slate-900",
+  "bg-amber-100 text-slate-900",
+  "bg-emerald-100 text-slate-900",
 ]
 
 export default function NoteCard({
@@ -24,19 +24,29 @@ export default function NoteCard({
   onDelete: () => void
 }) {
   const colorMap = {
-    sky: "bg-sky-100 text-slate-900",
-    amber: "bg-amber-100 text-slate-900",
-    emerald: "bg-emerald-100 text-slate-900",
-  }
+    sky: "bg-sky-50 text-slate-900 border-sky-200",
+    amber: "bg-amber-50 text-slate-900 border-amber-200",
+    emerald: "bg-emerald-50 text-slate-900 border-emerald-200",
+    purple: "bg-purple-50 text-slate-900 border-purple-200",
+    violet: "bg-violet-50 text-slate-900 border-violet-200",
+    indigo: "bg-indigo-50 text-slate-900 border-indigo-200",
+    teal: "bg-teal-50 text-slate-900 border-teal-200",
+    cyan: "bg-cyan-50 text-slate-900 border-cyan-200",
+    lime: "bg-lime-50 text-slate-900 border-lime-200",
+    blue: "bg-blue-50 text-slate-900 border-blue-200",
+    red: "bg-red-50 text-slate-900 border-red-200",
+    pink: "bg-pink-50 text-slate-900 border-pink-200",
+    fuchsia: "bg-fuchsia-50 text-slate-900 border-fuchsia-200",
+  } as const
   
 const color = colorMap[note.color]
 const date = new Date(note.date)
 
   return (
-    <Card className={cn("overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md", color)}>
+    <Card className={cn("overflow-hidden rounded-2xl border shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5", color)}>
       <CardContent className="p-4">
         <div className="mb-2 flex items-start justify-between gap-2">
-          <h3 className="text-pretty text-lg font-semibold leading-snug">{note.title || "Untitled"}</h3>
+          <h3 className="text-pretty text-lg font-semibold leading-snug tracking-tight">{note.title || "Untitled"}</h3>
           <div className="flex items-center gap-1.5">
             <Button
               size="icon"

@@ -15,6 +15,16 @@ const COLORS: { key: NoteColor; bg: string; ring: string }[] = [
   { key: "sky", bg: "bg-sky-500", ring: "ring-sky-300" },
   { key: "amber", bg: "bg-amber-500", ring: "ring-amber-300" },
   { key: "emerald", bg: "bg-emerald-500", ring: "ring-emerald-300" },
+  { key: "purple", bg: "bg-purple-500", ring: "ring-purple-300" },
+  { key: "violet", bg: "bg-violet-500", ring: "ring-violet-300" },
+  { key: "indigo", bg: "bg-indigo-500", ring: "ring-indigo-300" },
+  { key: "teal", bg: "bg-teal-500", ring: "ring-teal-300" },
+  { key: "cyan", bg: "bg-cyan-500", ring: "ring-cyan-300" },
+  { key: "lime", bg: "bg-lime-500", ring: "ring-lime-300" },
+  { key: "blue", bg: "bg-blue-500", ring: "ring-blue-300" },
+  { key: "red", bg: "bg-red-500", ring: "ring-red-300" },
+  { key: "pink", bg: "bg-pink-500", ring: "ring-pink-300" },
+  { key: "fuchsia", bg: "bg-fuchsia-500", ring: "ring-fuchsia-300" },
 ]
 
 export function NoteForm({
@@ -97,7 +107,7 @@ export function NoteForm({
           </div>
           <div className="grid gap-2">
             <Label>Color</Label>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               {COLORS.map((c) => (
                 <button
                   key={c.key}

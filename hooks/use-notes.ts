@@ -3,7 +3,20 @@
 import { useEffect, useState } from "react"
 import { nanoid } from "nanoid"
 
-export type NoteColor = "sky" | "amber" | "emerald"
+export type NoteColor =
+  | "sky"
+  | "amber"
+  | "emerald"
+  | "purple"
+  | "violet"
+  | "indigo"
+  | "teal"
+  | "cyan"
+  | "lime"
+  | "blue"
+  | "red"
+  | "pink"
+  | "fuchsia"
 
 export type Note = {
   id: string
