@@ -3,12 +3,13 @@
 import { useMemo, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { SearchBar } from "@/components/search-bar"
-import { NoteCard } from "@/components/note-card"
+
 import { NoteForm } from "@/components/note-form"
 import { useNotes } from "@/hooks/use-notes"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
+import NoteCard from "@/components/note-card"
 
 export default function Page() {
   const { notes, addNote, updateNote, removeNote, togglePin } = useNotes()

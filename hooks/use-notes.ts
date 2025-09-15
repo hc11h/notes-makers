@@ -12,6 +12,7 @@ export type Note = {
   date: string // ISO
   pinned: boolean
   color: NoteColor
+  
 }
 
 const STORAGE_KEY = "notes-v1"

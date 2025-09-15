@@ -23,8 +23,14 @@ export default function NoteCard({
   onEdit: () => void
   onDelete: () => void
 }) {
-  const color = colorPool[note.colorIndex % colorPool.length]
-  const date = new Date(note.createdAt)
+  const colorMap = {
+    sky: "bg-sky-100 text-slate-900",
+    amber: "bg-amber-100 text-slate-900",
+    emerald: "bg-emerald-100 text-slate-900",
+  }
+  
+const color = colorMap[note.color]
+const date = new Date(note.date)
 
   return (
     <Card className={cn("overflow-hidden rounded-2xl shadow-sm transition-shadow hover:shadow-md", color)}>
