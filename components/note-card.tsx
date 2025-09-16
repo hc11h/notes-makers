@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { PlusIcon as PushPin, Pencil, Trash2 } from "lucide-react"
+import { Heart, Pencil, Trash2 } from "lucide-react"
 import type { Note } from "@/hooks/use-notes"
 
 const colorPool = [
@@ -14,12 +14,12 @@ const colorPool = [
 
 export default function NoteCard({
   note,
-  onPin,
+  onFavorite,
   onEdit,
   onDelete,
 }: {
   note: Note
-  onPin: () => void
+  onFavorite: () => void
   onEdit: () => void
   onDelete: () => void
 }) {
@@ -39,8 +39,8 @@ export default function NoteCard({
     fuchsia: "bg-fuchsia-50 text-slate-900 border-fuchsia-200",
   } as const
   
-const color = colorMap[note.color]
-const date = new Date(note.date)
+  const color = colorMap[note.color]
+  const date = new Date(note.date)
 
   return (
     <Card className={cn("overflow-hidden rounded-2xl border shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5", color)}>
@@ -51,13 +51,13 @@ const date = new Date(note.date)
             <Button
               size="icon"
               variant="ghost"
-              aria-pressed={note.pinned}
-              aria-label={note.pinned ? "Unpin note" : "Pin note"}
-              onClick={onPin}
-              className={cn("size-8 rounded-full text-slate-700 hover:bg-black/5", note.pinned && "text-black")}
-              title={note.pinned ? "Unpin" : "Pin"}
+              aria-pressed={note.favorite}
+              aria-label={note.favorite ? "Remove from favorites" : "Add to favorites"}
+              onClick={onFavorite}
+              className={cn("size-8 rounded-full text-slate-700 hover:bg-black/5", note.favorite && "text-red-500")}
+              title={note.favorite ? "Remove from favorites" : "Add to favorites"}
             >
-              <PushPin className={cn("size-4", note.pinned && "fill-current")} />
+              <Heart className={cn("size-4", note.favorite && "fill-current")} />
             </Button>
             <Button
               size="icon"

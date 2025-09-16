@@ -23,9 +23,8 @@ export type Note = {
   title: string
   content: string
   date: string // ISO
-  pinned: boolean
+  favorite: boolean
   color: NoteColor
-  
 }
 
 const STORAGE_KEY = "notes-v1"
@@ -37,7 +36,7 @@ const seedNotes: Note[] = [
     title: "The beginning of screenless design",
     content: "UI jobs to be taken over by Solution Architect. Exploring how voice and ambient UX reshape flows.",
     date: "2020-05-21T00:00:00.000Z",
-    pinned: false,
+    favorite: false,
     color: "amber",
   },
   {
@@ -45,7 +44,7 @@ const seedNotes: Note[] = [
     title: "52 Research Terms you need to know as a UX Designer",
     content: "From heuristic evaluation to triangulation—short glossary for product folks.",
     date: "2020-05-23T00:00:00.000Z",
-    pinned: true,
+    favorite: true,
     color: "sky",
   },
   {
@@ -53,7 +52,7 @@ const seedNotes: Note[] = [
     title: "UI & UX Lessons from Designing My Own Product",
     content: "Notes on tradeoffs, prob discovery and scope with tiny teams shipping fast.",
     date: "2020-06-01T00:00:00.000Z",
-    pinned: false,
+    favorite: false,
     color: "emerald",
   },
 ]
@@ -99,9 +98,9 @@ export function useNotes() {
     setNotes((prev) => prev.filter((n) => n.id !== id))
   }
 
-  const togglePin = (id: string) => {
-    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, pinned: !n.pinned } : n)))
+  const toggleFavorite = (id: string) => {
+    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, favorite: !n.favorite } : n)))
   }
 
-  return { notes, addNote, updateNote, removeNote, togglePin }
+  return { notes, addNote, updateNote, removeNote, toggleFavorite }
 }

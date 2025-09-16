@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils"
 import NoteCard from "@/components/note-card"
 
 export default function Page() {
-  const { notes, addNote, updateNote, removeNote, togglePin } = useNotes()
+  const { notes, addNote, updateNote, removeNote, toggleFavorite } = useNotes()
   const [query, setQuery] = useState("")
   const [formOpen, setFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -26,9 +26,9 @@ export default function Page() {
     const bySearch = q.length
       ? notes.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
       : notes
-    // pinned first, newest first inside groups
+    // favorites first, newest first inside groups
     return [...bySearch].sort((a, b) => {
-      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
+      if (a.favorite !== b.favorite) return a.favorite ? -1 : 1
       return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
   }, [notes, query])
@@ -60,7 +60,7 @@ export default function Page() {
               <NoteCard
                 key={note.id}
                 note={note}
-                onPin={() => togglePin(note.id)}
+                onFavorite={() => toggleFavorite(note.id)}
                 onEdit={() => onEdit(note.id)}
                 onDelete={() => removeNote(note.id)}
               />
