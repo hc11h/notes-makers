@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { cn } from "@/lib/utils"
+import { Slot } from "@radix-ui/react-slot" // Import Slot
 
 const DialogCtx = React.createContext<{ close: () => void } | null>(null)
 
@@ -81,16 +82,16 @@ export function DialogClose({
     onClick?.(e)
     ctx?.close?.()
   }
+  
   if (asChild && React.isValidElement(children)) {
-    // clone child and inject onClick that closes dialog
-    return React.cloneElement(children as React.ReactElement, {
-      onClick: (e: React.MouseEvent) => {
-        // @ts-expect-error allow if child has its own onClick
-        children.props?.onClick?.(e)
-        handle(e as any)
-      },
-    })
+    // Use Slot for polymorphic behavior
+    return (
+      <Slot onClick={handle} {...props}>
+        {children}
+      </Slot>
+    )
   }
+  
   return (
     <button type="button" onClick={handle} {...props}>
       {children ?? "Close"}

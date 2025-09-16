@@ -10,7 +10,7 @@ import { useNotes, type Note } from "@/hooks/use-notes"
 import NoteCard from "@/components/note-card"
 
 export default function NotesApp() {
-  const { notes, createNote, updateNote, deleteNote, togglePin } = useNotes()
+  const { notes, addNote, updateNote, removeNote, togglePin } = useNotes()
 
   const [query, setQuery] = useState("")
   const [isOpen, setIsOpen] = useState(false)
@@ -21,15 +21,23 @@ export default function NotesApp() {
     const list = q
       ? notes.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
       : notes
-    // pinned first, then updatedAt desc
+    // pinned first, then by date (descending)
     return [...list].sort((a, b) => {
       if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
-      return b.updatedAt - a.updatedAt
+      // Use date property instead of updatedAt
+      return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
   }, [notes, query])
 
   function openCreate() {
-    setDraft({ title: "", content: "" })
+    // Create a new note with all required properties
+    setDraft({
+      title: "",
+      content: "",
+      date: new Date().toISOString(),
+      pinned: false,
+      color: "sky" // Default white color
+    })
     setIsOpen(true)
   }
 
@@ -50,7 +58,14 @@ export default function NotesApp() {
     if (draft.id) {
       updateNote(draft.id, { title, content })
     } else {
-      createNote({ title, content })
+      // Ensure all required properties are present when creating a new note
+      addNote({
+        title,
+        content,
+        date: new Date().toISOString(),
+        pinned: false,
+        color: "sky" // Default white color
+      })
     }
     setIsOpen(false)
     setDraft(null)
@@ -98,7 +113,7 @@ export default function NotesApp() {
               note={note}
               onPin={() => togglePin(note.id)}
               onEdit={() => openEdit(note)}
-              onDelete={() => deleteNote(note.id)}
+              onDelete={() => removeNote(note.id)}
             />
           ))}
         </div>

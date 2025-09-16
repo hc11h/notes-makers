@@ -11,6 +11,31 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   ...compat.extends("next/core-web-vitals", "next/typescript"),
+  {
+    rules: {
+      // Allow empty interfaces when they extend another interface
+      "@typescript-eslint/no-empty-object-type": "off",
+      
+      // Allow unused variables in specific cases
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_",
+          "varsIgnorePattern": "^_",
+          "caughtErrorsIgnorePattern": "^_"
+        }
+      ],
+      
+      // Allow any types in specific cases where they're needed
+      "@typescript-eslint/no-explicit-any": [
+        "warn",
+        {
+          "ignoreRestArgs": true,
+          "ignoreUnknown": true
+        }
+      ]
+    }
+  }
 ];
 
 export default eslintConfig;

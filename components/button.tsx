@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "default" | "outline" | "ghost"
   size?: "default" | "icon"
+  asChild?: boolean // Add this property
 }
 
 const buttonVariants = cva(
