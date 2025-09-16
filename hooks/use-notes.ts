@@ -1,3 +1,4 @@
+// hooks/use-notes.ts
 "use client"
 
 import { useEffect, useState } from "react"
@@ -25,6 +26,7 @@ export type Note = {
   date: string // ISO
   favorite: boolean
   color: NoteColor
+  order: number // Add order property for custom sorting
 }
 
 const STORAGE_KEY = "notes-v1"
@@ -38,6 +40,7 @@ const seedNotes: Note[] = [
     date: "2020-05-21T00:00:00.000Z",
     favorite: false,
     color: "amber",
+    order: 0,
   },
   {
     id: "seed-2",
@@ -46,6 +49,7 @@ const seedNotes: Note[] = [
     date: "2020-05-23T00:00:00.000Z",
     favorite: true,
     color: "sky",
+    order: 1,
   },
   {
     id: "seed-3",
@@ -54,6 +58,7 @@ const seedNotes: Note[] = [
     date: "2020-06-01T00:00:00.000Z",
     favorite: false,
     color: "emerald",
+    order: 2,
   },
 ]
 
@@ -69,7 +74,13 @@ export function useNotes() {
         setNotes(seedNotes)
         localStorage.setItem(STORAGE_KEY, JSON.stringify(seedNotes))
       } else {
-        setNotes(JSON.parse(raw))
+        const parsedNotes = JSON.parse(raw)
+        // Ensure all notes have an order property
+        const notesWithOrder = parsedNotes.map((note: Note, index: number) => ({
+          ...note,
+          order: note.order ?? index,
+        }))
+        setNotes(notesWithOrder)
       }
     } catch {
       setNotes(seedNotes)
@@ -87,7 +98,11 @@ export function useNotes() {
   }, [notes])
 
   const addNote = (partial: Omit<Note, "id">) => {
-    setNotes((prev) => [{ id: nanoid(), ...partial }, ...prev])
+    const newNote = {
+      ...partial,
+      order: notes.length, // Add to the end
+    }
+    setNotes((prev) => [{ id: nanoid(), ...newNote }, ...prev])
   }
 
   const updateNote = (id: string, patch: Partial<Note>) => {
@@ -102,5 +117,19 @@ export function useNotes() {
     setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, favorite: !n.favorite } : n)))
   }
 
-  return { notes, addNote, updateNote, removeNote, toggleFavorite }
+  const reorderNotes = (startIndex: number, endIndex: number) => {
+    setNotes((prevNotes) => {
+      const result = Array.from(prevNotes)
+      const [removed] = result.splice(startIndex, 1)
+      result.splice(endIndex, 0, removed)
+      
+      // Update order property for all notes
+      return result.map((note, index) => ({
+        ...note,
+        order: index,
+      }))
+    })
+  }
+
+  return { notes, addNote, updateNote, removeNote, toggleFavorite, reorderNotes }
 }

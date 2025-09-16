@@ -1,6 +1,12 @@
+// app/page.tsx
 "use client"
 
 import { useMemo, useState } from "react"
+import {
+  DragDropContext,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd"
 import { Sidebar } from "@/components/sidebar"
 import { SearchBar } from "@/components/search-bar"
 import { NoteForm } from "@/components/note-form"
@@ -8,10 +14,10 @@ import { useNotes } from "@/hooks/use-notes"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
-import NoteCard from "@/components/note-card"
+import DraggableNoteCard from "@/components/DraggableNoteCard"
 
 export default function Page() {
-  const { notes, addNote, updateNote, removeNote, toggleFavorite } = useNotes()
+  const { notes, addNote, updateNote, removeNote, toggleFavorite, reorderNotes } = useNotes()
   const [query, setQuery] = useState("")
   const [formOpen, setFormOpen] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
@@ -26,12 +32,23 @@ export default function Page() {
     const bySearch = q.length
       ? notes.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
       : notes
-    // favorites first, newest first inside groups
+    // favorites first, then by custom order
     return [...bySearch].sort((a, b) => {
       if (a.favorite !== b.favorite) return a.favorite ? -1 : 1
-      return new Date(b.date).getTime() - new Date(a.date).getTime()
+      return a.order - b.order
     })
   }, [notes, query])
+
+  const onDragEnd = (result: DropResult) => {
+    if (!result.destination) return
+
+    const sourceIndex = result.source.index
+    const destinationIndex = result.destination.index
+
+    if (sourceIndex !== destinationIndex) {
+      reorderNotes(sourceIndex, destinationIndex)
+    }
+  }
 
   const onCreate = () => {
     setEditingId(null)
@@ -55,17 +72,29 @@ export default function Page() {
             </div>
           </header>
 
-          <section aria-label="Notes Grid" className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}>
-            {filtered.map((note) => (
-              <NoteCard
-                key={note.id}
-                note={note}
-                onFavorite={() => toggleFavorite(note.id)}
-                onEdit={() => onEdit(note.id)}
-                onDelete={() => removeNote(note.id)}
-              />
-            ))}
-          </section>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="notes" direction="horizontal">
+              {(provided) => (
+                <section
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className={cn("grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4")}
+                >
+                  {filtered.map((note, index) => (
+                    <DraggableNoteCard
+                      key={note.id}
+                      note={note}
+                      index={index}
+                      onFavorite={() => toggleFavorite(note.id)}
+                      onEdit={() => onEdit(note.id)}
+                      onDelete={() => removeNote(note.id)}
+                    />
+                  ))}
+                  {provided.placeholder}
+                </section>
+              )}
+            </Droppable>
+          </DragDropContext>
         </main>
       </div>
 
