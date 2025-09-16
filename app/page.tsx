@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react"
 import { Sidebar } from "@/components/sidebar"
 import { SearchBar } from "@/components/search-bar"
-
 import { NoteForm } from "@/components/note-form"
 import { useNotes } from "@/hooks/use-notes"
 import { Button } from "@/components/ui/button"
