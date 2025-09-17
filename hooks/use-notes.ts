@@ -2,7 +2,6 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { nanoid } from "nanoid"
 
 export type NoteColor =
   | "sky"
@@ -26,110 +25,149 @@ export type Note = {
   date: string // ISO
   favorite: boolean
   color: NoteColor
-  order: number // Add order property for custom sorting
+  order: number
 }
-
-const STORAGE_KEY = "notes-v1"
-
-// Seed a few example notes on first run to match the reference layout
-const seedNotes: Note[] = [
-  {
-    id: "seed-1",
-    title: "The beginning of screenless design",
-    content: "UI jobs to be taken over by Solution Architect. Exploring how voice and ambient UX reshape flows.",
-    date: "2020-05-21T00:00:00.000Z",
-    favorite: false,
-    color: "amber",
-    order: 0,
-  },
-  {
-    id: "seed-2",
-    title: "52 Research Terms you need to know as a UX Designer",
-    content: "From heuristic evaluation to triangulation—short glossary for product folks.",
-    date: "2020-05-23T00:00:00.000Z",
-    favorite: true,
-    color: "sky",
-    order: 1,
-  },
-  {
-    id: "seed-3",
-    title: "UI & UX Lessons from Designing My Own Product",
-    content: "Notes on tradeoffs, prob discovery and scope with tiny teams shipping fast.",
-    date: "2020-06-01T00:00:00.000Z",
-    favorite: false,
-    color: "emerald",
-    order: 2,
-  },
-]
 
 export function useNotes() {
   const [notes, setNotes] = useState<Note[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // Load from localStorage once
+  // Fetch notes from the backend
   useEffect(() => {
-    if (typeof window === "undefined") return
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY)
-      if (!raw) {
-        setNotes(seedNotes)
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(seedNotes))
-      } else {
-        const parsedNotes = JSON.parse(raw)
-        // Ensure all notes have an order property
-        const notesWithOrder = parsedNotes.map((note: Note, index: number) => ({
+    const fetchNotes = async () => {
+      try {
+        const response = await fetch('/api/notes')
+        if (!response.ok) throw new Error('Failed to fetch notes')
+        const data = await response.json()
+        // Ensure all notes have IDs
+        const notesWithIds = data.map((note: any) => ({
           ...note,
-          order: note.order ?? index,
+          id: note.id || note._id?.toString() || `temp-${Date.now()}`
         }))
-        setNotes(notesWithOrder)
+        setNotes(notesWithIds)
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setLoading(false)
       }
-    } catch {
-      setNotes(seedNotes)
     }
+
+    fetchNotes()
   }, [])
 
-  // Save on change
-  useEffect(() => {
-    if (typeof window === "undefined") return
+  const addNote = async (partial: Omit<Note, "id">) => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(notes))
-    } catch {
-      // ignore write errors
-    }
-  }, [notes])
-
-  const addNote = (partial: Omit<Note, "id">) => {
-    const newNote = {
-      ...partial,
-      order: notes.length, // Add to the end
-    }
-    setNotes((prev) => [{ id: nanoid(), ...newNote }, ...prev])
-  }
-
-  const updateNote = (id: string, patch: Partial<Note>) => {
-    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, ...patch } : n)))
-  }
-
-  const removeNote = (id: string) => {
-    setNotes((prev) => prev.filter((n) => n.id !== id))
-  }
-
-  const toggleFavorite = (id: string) => {
-    setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, favorite: !n.favorite } : n)))
-  }
-
-  const reorderNotes = (startIndex: number, endIndex: number) => {
-    setNotes((prevNotes) => {
-      const result = Array.from(prevNotes)
-      const [removed] = result.splice(startIndex, 1)
-      result.splice(endIndex, 0, removed)
+      const response = await fetch('/api/notes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(partial)
+      })
       
-      // Update order property for all notes
-      return result.map((note, index) => ({
-        ...note,
-        order: index,
-      }))
-    })
+      if (!response.ok) throw new Error('Failed to add note')
+      const newNote = await response.json()
+      // Ensure the new note has an ID
+      const noteWithId = {
+        ...newNote,
+        id: newNote.id || newNote._id?.toString() || `temp-${Date.now()}`
+      }
+      setNotes(prev => [noteWithId, ...prev])
+      return noteWithId
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
   }
 
-  return { notes, addNote, updateNote, removeNote, toggleFavorite, reorderNotes }
+  const updateNote = async (id: string, patch: Partial<Note>) => {
+    try {
+      const response = await fetch(`/api/notes/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(patch)
+      })
+      
+      if (!response.ok) throw new Error('Failed to update note')
+      const updatedNote = await response.json()
+      // Ensure the updated note has an ID
+      const noteWithId = {
+        ...updatedNote,
+        id: updatedNote.id || updatedNote._id?.toString() || id
+      }
+      setNotes(prev => prev.map(note => note.id === id ? noteWithId : note))
+      return noteWithId
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
+  }
+
+  const removeNote = async (id: string) => {
+    try {
+      const response = await fetch(`/api/notes/${id}`, {
+        method: 'DELETE'
+      })
+      
+      if (!response.ok) throw new Error('Failed to delete note')
+      setNotes(prev => prev.filter(note => note.id !== id))
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
+  }
+
+  const toggleFavorite = async (id: string) => {
+    try {
+      const note = notes.find(n => n.id === id)
+      if (!note) return
+      
+      const updatedNote = await updateNote(id, { favorite: !note.favorite })
+      return updatedNote
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
+  }
+
+  const reorderNotes = async (sourceIndex: number, destinationIndex: number) => {
+    try {
+      // Create a new array with the reordered notes
+      const newNotes = Array.from(notes)
+      const [removed] = newNotes.splice(sourceIndex, 1)
+      newNotes.splice(destinationIndex, 0, removed)
+      
+      // Update the order property for each note
+      const updatedNotes = newNotes.map((note, index) => ({
+        ...note,
+        order: index
+      }))
+      
+      // Update the backend with the new order
+      const response = await fetch('/api/reorder', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notes: updatedNotes })
+      })
+      
+      if (!response.ok) throw new Error('Failed to reorder notes')
+      
+      // Update local state
+      setNotes(updatedNotes)
+      return updatedNotes
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Unknown error')
+      throw err
+    }
+  }
+
+  return { 
+    notes, 
+    loading, 
+    error, 
+    addNote, 
+    updateNote, 
+    removeNote, 
+    toggleFavorite, 
+    reorderNotes 
+  }
 }

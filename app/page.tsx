@@ -82,7 +82,7 @@ export default function Page() {
                 >
                   {filtered.map((note, index) => (
                     <DraggableNoteCard
-                      key={note.id}
+                      key={note.id} // Use note.id instead of index for stable keys
                       note={note}
                       index={index}
                       onFavorite={() => toggleFavorite(note.id)}

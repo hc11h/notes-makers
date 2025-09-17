@@ -1,4 +1,4 @@
-// components/draggable-note-card.tsx
+// components/DraggableNoteCard.tsx
 "use client"
 
 import { Draggable } from "@hello-pangea/dnd"
@@ -40,8 +40,11 @@ export default function DraggableNoteCard({
   const color = colorMap[note.color]
   const date = new Date(note.date)
 
+  // Ensure note has an id before using it as draggableId
+  const draggableId = note.id || `temp-${index}`
+
   return (
-    <Draggable draggableId={note.id} index={index}>
+    <Draggable draggableId={draggableId} index={index}>
       {(provided) => (
         <Card
           ref={provided.innerRef}
