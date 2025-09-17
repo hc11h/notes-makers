@@ -9,12 +9,13 @@ import {
 } from "@hello-pangea/dnd"
 import { Sidebar } from "@/components/sidebar"
 import { SearchBar } from "@/components/search-bar"
-import { NoteForm } from "@/components/note-form"
 import { useNotes } from "@/hooks/use-notes"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import DraggableNoteCard from "@/components/DraggableNoteCard"
+import { NoteForm } from "@/components/note-form"
+
 
 export default function Page() {
   const { notes, addNote, updateNote, removeNote, toggleFavorite, reorderNotes } = useNotes()

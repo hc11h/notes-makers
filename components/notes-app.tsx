@@ -10,7 +10,7 @@ import { useNotes, type Note } from "@/hooks/use-notes"
 import NoteCard from "@/components/note-card"
 
 export default function NotesApp() {
-  const { notes, addNote, updateNote, removeNote, togglePin } = useNotes()
+  const { notes, addNote, updateNote, removeNote, toggleFavorite } = useNotes() // Removed togglePin
 
   const [query, setQuery] = useState("")
   const [isOpen, setIsOpen] = useState(false)
@@ -21,9 +21,9 @@ export default function NotesApp() {
     const list = q
       ? notes.filter((n) => n.title.toLowerCase().includes(q) || n.content.toLowerCase().includes(q))
       : notes
-    // pinned first, then by date (descending)
+    // favorite first, then by date (descending)
     return [...list].sort((a, b) => {
-      if (a.pinned !== b.pinned) return a.pinned ? -1 : 1
+      if (a.favorite !== b.favorite) return a.favorite ? -1 : 1
       // Use date property instead of updatedAt
       return new Date(b.date).getTime() - new Date(a.date).getTime()
     })
@@ -35,7 +35,7 @@ export default function NotesApp() {
       title: "",
       content: "",
       date: new Date().toISOString(),
-      pinned: false,
+      favorite: false, // Use favorite instead of pinned
       color: "sky" // Default white color
     })
     setIsOpen(true)
@@ -62,9 +62,10 @@ export default function NotesApp() {
       addNote({
         title,
         content,
-        date: new Date().toISOString(),
-        pinned: false,
-        color: "sky" // Default white color
+        color:"sky",
+        date: new Date().toISOString(),  // Add the current date
+        favorite: false,   // Default to not favorited
+        order: 0          // Default order (you might want to adjust this based on your app logic)
       })
     }
     setIsOpen(false)
@@ -111,7 +112,7 @@ export default function NotesApp() {
             <NoteCard
               key={note.id}
               note={note}
-              onPin={() => togglePin(note.id)}
+              onFavorite={() => toggleFavorite(note.id)}
               onEdit={() => openEdit(note)}
               onDelete={() => removeNote(note.id)}
             />

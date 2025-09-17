@@ -3,10 +3,11 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Note from '@/models/Note'
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params promise
     await dbConnect()
-    const note = await Note.findById(params.id)
+    const note = await Note.findById(id)
     
     if (!note) {
       return NextResponse.json({ message: 'Note not found' }, { status: 404 })
@@ -23,13 +24,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
+export async function PUT(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params promise
     await dbConnect()
     const { title, content, favorite, color, order } = await request.json()
     
     const updatedNote = await Note.findByIdAndUpdate(
-      params.id,
+      id,
       { title, content, favorite, color, order },
       { new: true }
     )
@@ -49,10 +51,11 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   }
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
+export async function DELETE(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
+    const { id } = await params; // Await the params promise
     await dbConnect()
-    const deletedNote = await Note.findByIdAndDelete(params.id)
+    const deletedNote = await Note.findByIdAndDelete(id)
     
     if (!deletedNote) {
       return NextResponse.json({ message: 'Note not found' }, { status: 404 })
