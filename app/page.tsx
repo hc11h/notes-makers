@@ -1,4 +1,3 @@
-// app/page.tsx
 "use client"
 
 import { useMemo, useState } from "react"
@@ -7,14 +6,16 @@ import {
   Droppable,
   DropResult,
 } from "@hello-pangea/dnd"
-import { Sidebar } from "@/components/sidebar"
-import { SearchBar } from "@/components/search-bar"
-import { useNotes } from "@/hooks/use-notes"
+import { SearchBar } from "@/components/SearchBar"
+import { useNotes } from "@/hooks/useNotes"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import DraggableNoteCard from "@/components/DraggableNoteCard"
-import { NoteForm } from "@/components/note-form"
+import { NoteForm } from "@/components/NoteForm"
+import { SideBar } from "@/components/ui/sidebar";
+
+
 
 
 export default function Page() {
@@ -64,7 +65,7 @@ export default function Page() {
   return (
     <div className="min-h-dvh bg-background text-foreground">
       <div className="flex">
-        <Sidebar onAdd={onCreate} />
+        <SideBar onAdd={onCreate} />
         <main className="mx-auto flex-1 p-4 md:max-w-6xl md:p-8">
           <header className="mb-4 md:mb-8">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">

@@ -1,4 +1,3 @@
-// components/DraggableNoteCard.tsx
 "use client"
 
 import { Draggable } from "@hello-pangea/dnd"
@@ -6,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { GripVertical, Heart, Pencil, Trash2 } from "lucide-react"
-import type { Note } from "@/hooks/use-notes"
+import type { Note } from "@/hooks/useNotes"
 
 export default function DraggableNoteCard({
   note,
@@ -40,7 +39,7 @@ export default function DraggableNoteCard({
   const color = colorMap[note.color]
   const date = new Date(note.date)
 
-  // Ensure note has an id before using it as draggableId
+
   const draggableId = note.id || `temp-${index}`
 
   return (
