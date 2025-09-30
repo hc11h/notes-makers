@@ -5,16 +5,21 @@ import dbConnect from '@/lib/mongodb'
 import Note from '@/models/Note'
 
 
-// GET a single note by id, only if it belongs to the user
+// GET a single note by id, only if it belongs to the user (by token)
+import User from '@/models/User';
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
-    const userId = request.nextUrl.searchParams.get('userId');
-    if (!userId) {
-      return NextResponse.json({ message: 'Missing userId' }, { status: 401 });
+    const token = request.nextUrl.searchParams.get('token');
+    if (!token) {
+      return NextResponse.json({ message: 'Missing token' }, { status: 401 });
     }
     await dbConnect();
-    const note = await Note.findOne({ _id: id, userId });
+    const user = await User.findOne({ token });
+    if (!user) {
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+    }
+    const note = await Note.findOne({ _id: id, userId: user.userId });
     if (!note) {
       return NextResponse.json({ message: 'Note not found' }, { status: 404 });
     }
@@ -29,19 +34,23 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 
-// UPDATE a note by id, only if it belongs to the user
+// UPDATE a note by id, only if it belongs to the user (by token)
 export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
-    const userId = request.nextUrl.searchParams.get('userId');
-    if (!userId) {
-      return NextResponse.json({ message: 'Missing userId' }, { status: 401 });
+    const body = await request.json();
+    const { token, ...patch } = body;
+    if (!token) {
+      return NextResponse.json({ message: 'Missing token' }, { status: 401 });
     }
     await dbConnect();
-    const { title, content, favorite, color, order } = await request.json();
+    const user = await User.findOne({ token });
+    if (!user) {
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+    }
     const updatedNote = await Note.findOneAndUpdate(
-      { _id: id, userId },
-      { title, content, favorite, color, order },
+      { _id: id, userId: user.userId },
+      patch,
       { new: true }
     );
     if (!updatedNote) {
@@ -58,16 +67,21 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 }
 
 
-// DELETE a note by id, only if it belongs to the user
+// DELETE a note by id, only if it belongs to the user (by token)
 export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const { id } = params;
-    const userId = request.nextUrl.searchParams.get('userId');
-    if (!userId) {
-      return NextResponse.json({ message: 'Missing userId' }, { status: 401 });
+    const body = await request.json().catch(() => ({}));
+    const token = body.token || request.nextUrl.searchParams.get('token');
+    if (!token) {
+      return NextResponse.json({ message: 'Missing token' }, { status: 401 });
     }
     await dbConnect();
-    const deletedNote = await Note.findOneAndDelete({ _id: id, userId });
+    const user = await User.findOne({ token });
+    if (!user) {
+      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+    }
+    const deletedNote = await Note.findOneAndDelete({ _id: id, userId: user.userId });
     if (!deletedNote) {
       return NextResponse.json({ message: 'Note not found' }, { status: 404 });
     }
