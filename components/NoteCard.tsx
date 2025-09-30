@@ -6,11 +6,6 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Pencil, Trash2 } from "lucide-react"
 import type { Note } from "@/hooks/useNotes"
 
-const colorPool = [
-  "bg-sky-100 text-slate-900",
-  "bg-amber-100 text-slate-900",
-  "bg-emerald-100 text-slate-900",
-]
 
 export default function NoteCard({
   note,

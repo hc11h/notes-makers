@@ -6,7 +6,7 @@ import { Plus, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-export function Sidebar({ onAdd }: { onAdd: () => void }) {
+export function SideBar({ onAdd }: { onAdd: () => void }) {
   const { userId, error, loading } = useUser();
   const router = useRouter();
 

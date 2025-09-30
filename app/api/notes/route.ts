@@ -1,6 +1,5 @@
 // app/api/notes/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import dbConnect from '@/lib/mongodb'
 import Note from '@/models/Note'
 import { requireUser } from '@/app/api/_auth'
 
@@ -53,7 +52,8 @@ const savedNote = await newNote.save();
       id: savedNote._id.toString()
     };
     return NextResponse.json(noteWithId, { status: 201 });
-  } catch (error) {
-    return NextResponse.json({ message: 'Failed to create note' }, { status: 400 });
+  } catch (_error) { // Notice the underscore here
+    console.error(_error);
+    return NextResponse.json({ message: 'Failed to create notes' }, { status: 500 });
   }
 }

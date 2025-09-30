@@ -70,9 +70,9 @@ export function NoteForm({
         title,
         content,
         color,
-        date: new Date().toISOString(),  // Add the current date
-        favorite: false,   // Default to not favorited
-        order: 0          // Default order (you might want to adjust this based on your app logic)
+        date: new Date().toISOString(),
+        favorite: false,
+        order: 0
       })
     }
     onOpenChange(false)

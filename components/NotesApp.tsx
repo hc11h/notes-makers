@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
 import { useNotes, type Note } from "@/hooks/useNotes"
-import NoteCard from "@/components/note-card"
+import NoteCard from "@/components/NoteCard"
 
 export default function NotesApp() {
   const { notes, addNote, updateNote, removeNote, toggleFavorite } = useNotes() // Removed togglePin
@@ -58,14 +58,14 @@ export default function NotesApp() {
     if (draft.id) {
       updateNote(draft.id, { title, content })
     } else {
-      // Ensure all required properties are present when creating a new note
+     
       addNote({
         title,
         content,
         color:"sky",
-        date: new Date().toISOString(),  // Add the current date
-        favorite: false,   // Default to not favorited
-        order: 0          // Default order (you might want to adjust this based on your app logic)
+        date: new Date().toISOString(),
+        favorite: false,
+        order: 0
       })
     }
     setIsOpen(false)
@@ -130,7 +130,7 @@ export default function NotesApp() {
         </Button>
       </section>
 
-      {/* Create/Edit modal */}
+     
       <Dialog
         open={isOpen}
         onOpenChange={(v) => {

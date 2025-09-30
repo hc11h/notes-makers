@@ -12,7 +12,7 @@ export async function PUT(request: NextRequest) {
   try {
     await dbConnect();
 
-    const { notes, token }: { notes: NoteOrder[]; token?: string } = await request.json();
+    const { notes }: { notes: NoteOrder[] } = await request.json();
 
     const user = await requireUser(request);
     if (!user.userId) return user; // Unauthorized response from requireUser

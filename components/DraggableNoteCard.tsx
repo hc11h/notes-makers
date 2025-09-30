@@ -1,4 +1,3 @@
-// components/DraggableNoteCard.tsx
 "use client"
 
 import { Draggable } from "@hello-pangea/dnd"
@@ -40,7 +39,7 @@ export default function DraggableNoteCard({
   const color = colorMap[note.color]
   const date = new Date(note.date)
 
-  // Ensure note has an id before using it as draggableId
+
   const draggableId = note.id || `temp-${index}`
 
   return (
