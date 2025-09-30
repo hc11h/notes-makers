@@ -3,11 +3,16 @@ import { NextResponse } from 'next/server'
 import dbConnect from '@/lib/mongodb'
 import Note from '@/models/Note'
 
-export async function GET() {
+import { NextRequest } from 'next/server'
+
+export async function GET(req: NextRequest) {
   try {
     await dbConnect()
-    const notes = await Note.find().sort({ favorite: -1, order: 1 })
-    // Ensure all notes have an id field
+    const userId = req.nextUrl.searchParams.get('userId')
+    if (!userId) {
+      return NextResponse.json({ message: 'Missing userId' }, { status: 401 })
+    }
+    const notes = await Note.find({ userId }).sort({ favorite: -1, order: 1 })
     const notesWithIds = notes.map(note => ({
       ...note.toObject(),
       id: note._id.toString()
@@ -18,21 +23,23 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     await dbConnect()
-    const { title, content, favorite, color, order } = await request.json()
-    
+    const body = await request.json()
+    const { userId, title, content, favorite, color, order } = body
+    if (!userId) {
+      return NextResponse.json({ message: 'Missing userId' }, { status: 401 })
+    }
     const newNote = new Note({
+      userId,
       title,
       content,
       favorite: favorite || false,
       color,
       order: order || 0,
     })
-
     const savedNote = await newNote.save()
-    // Ensure the new note has an id field
     const noteWithId = {
       ...savedNote.toObject(),
       id: savedNote._id.toString()

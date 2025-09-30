@@ -1,3 +1,17 @@
+// GET /api/user/me?token=... returns the current user data if token is valid
+export async function GET_ME(req: NextRequest) {
+  await dbConnect();
+  const token = req.nextUrl.searchParams.get("token");
+  if (!token) {
+    return NextResponse.json({ error: "Token required" }, { status: 400 });
+  }
+  const user = await User.findOne({ token });
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+  // Only return safe fields
+  return NextResponse.json({ userId: user.userId, createdAt: user.createdAt });
+}
 
 import { NextRequest, NextResponse } from "next/server"
 import { randomUUID } from "crypto"
