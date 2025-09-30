@@ -122,20 +122,22 @@ export function useNotes() {
   };
 
   const reorderNotes = async (sourceIndex: number, destinationIndex: number) => {
+    const token = sessionStorage.getItem("user_token");
+    if (!token) throw new Error("No user token found");
+    const prevNotes = notes;
+    const newNotes = Array.from(notes);
+    const [removed] = newNotes.splice(sourceIndex, 1);
+    newNotes.splice(destinationIndex, 0, removed);
+    const updatedNotes = newNotes.map((note, index) => ({
+      ...note,
+      order: index
+    }));
+    setNotes(updatedNotes); // Optimistic update
     try {
-      const token = sessionStorage.getItem("user_token");
-      if (!token) throw new Error("No user token found");
-      const newNotes = Array.from(notes);
-      const [removed] = newNotes.splice(sourceIndex, 1);
-      newNotes.splice(destinationIndex, 0, removed);
-      const updatedNotes = newNotes.map((note, index) => ({
-        ...note,
-        order: index
-      }));
-  await axios.put("/api/reorder", { notes: updatedNotes }, { headers: { Authorization: `Bearer ${token}` } });
-      setNotes(updatedNotes);
+      await axios.put("/api/reorder", { notes: updatedNotes }, { headers: { Authorization: `Bearer ${token}` } });
       return updatedNotes;
     } catch (err: any) {
+      setNotes(prevNotes); // Revert on error
       setError(err?.message || "Unknown error");
       throw err;
     }

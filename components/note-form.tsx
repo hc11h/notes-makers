@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import type { Note, NoteColor } from "@/hooks/use-notes"
+import type { Note, NoteColor } from "@/hooks/useNotes"
 import { cn } from "@/lib/utils"
 
 const COLORS: { key: NoteColor; bg: string; ring: string }[] = [

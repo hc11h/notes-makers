@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/hooks/use-session";
+import { useUser } from "@/hooks/useSession";
 import { Plus, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";

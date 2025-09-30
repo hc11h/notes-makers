@@ -9,7 +9,7 @@ import {
 } from "@hello-pangea/dnd"
 import { Sidebar } from "@/components/sidebar"
 import { SearchBar } from "@/components/search-bar"
-import { useNotes } from "@/hooks/use-notes"
+import { useNotes } from "@/hooks/useNotes"
 import { Button } from "@/components/ui/button"
 import { Plus } from "lucide-react"
 import { cn } from "@/lib/utils"

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogClose } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"
-import { useNotes, type Note } from "@/hooks/use-notes"
+import { useNotes, type Note } from "@/hooks/useNotes"
 import NoteCard from "@/components/note-card"
 
 export default function NotesApp() {

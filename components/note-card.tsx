@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Heart, Pencil, Trash2 } from "lucide-react"
-import type { Note } from "@/hooks/use-notes"
+import type { Note } from "@/hooks/useNotes"
 
 const colorPool = [
   "bg-sky-100 text-slate-900",
