@@ -17,7 +17,8 @@ const eslintConfig = [
       "@typescript-eslint/no-empty-object-type": "off",
       
       // Allow unused variables in specific cases
-      "no-unused-vars": [
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": [
         "error",
         {
           "argsIgnorePattern": "^_",
@@ -31,7 +32,7 @@ const eslintConfig = [
         "warn",
         {
           "ignoreRestArgs": true,
-          "ignoreUnknown": true
+          "fixToUnknown": false
         }
       ]
     }

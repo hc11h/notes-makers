@@ -36,7 +36,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { title, content, favorite, color, order } = body;
    const newNote = new Note({
-  userId: user.userId, // <-- ensure this is set
+  userId: user.userId,
   title,
   content,
   favorite: favorite || false,
@@ -52,7 +52,7 @@ const savedNote = await newNote.save();
       id: savedNote._id.toString()
     };
     return NextResponse.json(noteWithId, { status: 201 });
-  } catch (_error) { // Notice the underscore here
+  } catch (_error) { 
     console.error(_error);
     return NextResponse.json({ message: 'Failed to create notes' }, { status: 500 });
   }

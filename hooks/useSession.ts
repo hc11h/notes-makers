@@ -36,7 +36,6 @@ export function useUser() {
         setLoading(false)
         router.replace("/error")
       })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   function createUser() {

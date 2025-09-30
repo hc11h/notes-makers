@@ -15,25 +15,24 @@ export async function PUT(request: NextRequest) {
     const { notes }: { notes: NoteOrder[] } = await request.json();
 
     const user = await requireUser(request);
-    if (!user.userId) return user; // Unauthorized response from requireUser
+    if (!user.userId) return user; 
 
-    // Validate input
     if (!Array.isArray(notes) || notes.length === 0) {
       return NextResponse.json({ message: "No notes to reorder" }, { status: 400 });
     }
 
-    // Map update promises ensuring the note belongs to the user
+
     const updatePromises = notes.map((note, index) =>
       Note.findOneAndUpdate(
         { _id: note.id, userId: user.userId },
         { order: index },
-        { new: true } // return the updated document
+        { new: true } 
       )
     );
 
     const updatedNotes = await Promise.all(updatePromises);
 
-    // Check if any update failed (i.e., no note found or user mismatch)
+
     const failedUpdates = updatedNotes.filter(note => note === null);
     if (failedUpdates.length > 0) {
       return NextResponse.json(

@@ -22,7 +22,7 @@ export type Note = {
   id: string;
   title: string;
   content: string;
-  date: string; // ISO
+  date: string;
   favorite: boolean;
   color: NoteColor;
   order: number;
@@ -33,14 +33,12 @@ export function useNotes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Fetch notes from the backend, using token from sessionStorage
   useEffect(() => {
     const fetchNotes = async () => {
       try {
         const token = sessionStorage.getItem("user_token");
         if (!token) throw new Error("No user token found");
-        // Fetch notes for this user by token only
-  const response = await axios.get(`/api/notes`, { headers: { Authorization: `Bearer ${token}` } });
+        const response = await axios.get(`/api/notes`, { headers: { Authorization: `Bearer ${token}` } });
         const data = response.data;
         const notesWithIds = data.map((note: any) => ({
           ...note,
@@ -60,7 +58,7 @@ export function useNotes() {
     try {
       const token = sessionStorage.getItem("user_token");
       if (!token) throw new Error("No user token found");
-  const response = await axios.post("/api/notes", { ...partial }, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.post("/api/notes", { ...partial }, { headers: { Authorization: `Bearer ${token}` } });
       const newNote = response.data;
       const noteWithId = {
         ...newNote,
@@ -78,7 +76,7 @@ export function useNotes() {
     try {
       const token = sessionStorage.getItem("user_token");
       if (!token) throw new Error("No user token found");
-  const response = await axios.put(`/api/notes/${id}`, { ...patch }, { headers: { Authorization: `Bearer ${token}` } });
+      const response = await axios.put(`/api/notes/${id}`, { ...patch }, { headers: { Authorization: `Bearer ${token}` } });
       const updatedNote = response.data;
       const noteWithId = {
         ...updatedNote,
@@ -98,7 +96,7 @@ export function useNotes() {
     try {
       const token = sessionStorage.getItem("user_token");
       if (!token) throw new Error("No user token found");
-  await axios.delete(`/api/notes/${id}`, { headers: { Authorization: `Bearer ${token}` } });
+      await axios.delete(`/api/notes/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setNotes((prev) => prev.filter((note) => note.id !== id));
     } catch (err: any) {
       setError(err?.message || "Unknown error");
@@ -110,7 +108,6 @@ export function useNotes() {
     try {
       const note = notes.find((n) => n.id === id);
       if (!note) return;
-
       const updatedNote = await updateNote(id, {
         favorite: !note.favorite
       });
@@ -132,12 +129,12 @@ export function useNotes() {
       ...note,
       order: index
     }));
-    setNotes(updatedNotes); // Optimistic update
+    setNotes(updatedNotes); 
     try {
       await axios.put("/api/reorder", { notes: updatedNotes }, { headers: { Authorization: `Bearer ${token}` } });
       return updatedNotes;
     } catch (err: any) {
-      setNotes(prevNotes); // Revert on error
+      setNotes(prevNotes); 
       setError(err?.message || "Unknown error");
       throw err;
     }
