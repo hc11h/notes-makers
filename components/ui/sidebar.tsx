@@ -4,14 +4,17 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/hooks/useSession";
 import { Plus, User } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { ProfileDialog } from "./ProfileDialog";
 
 export function SideBar({ onAdd }: { onAdd: () => void }) {
-  const { userId, error, loading } = useUser();
+  const { token, error, loading } = useUser();
   const router = useRouter();
 
+
+  const [dialogOpen, setDialogOpen] = useState(false);
   function handleProfileClick() {
-    alert(`User ID: ${userId}`);
+    setDialogOpen(true);
   }
 
   // ✅ Redirect handled safely in useEffect
@@ -44,8 +47,14 @@ export function SideBar({ onAdd }: { onAdd: () => void }) {
       >
         <User className="h-5 w-5" />
       </Button>
+      <ProfileDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        userId={token || ""}
+        error={error}
+      />
       <span className="mt-2 text-xs text-muted-foreground break-all text-center">
-        {userId?.slice(0, 8)}
+        {token?.slice(0, 4)}
       </span>
     </aside>
   );
