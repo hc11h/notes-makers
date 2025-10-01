@@ -53,9 +53,6 @@ export function SideBar({ onAdd }: { onAdd: () => void }) {
         userId={token || ""}
         error={error}
       />
-      <span className="mt-2 text-xs text-muted-foreground break-all text-center">
-        {token?.slice(0, 4)}
-      </span>
-    </aside>
+      </aside>
   );
 }

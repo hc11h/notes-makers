@@ -42,7 +42,7 @@ export function useUser() {
         toast.error("Invalid or expired user token. Auth failed.")
         setError("Invalid or expired user session.")
         setLoading(false)
-        router.replace("/error")
+        // router.replace("/error")
       })
   }, [])
 
