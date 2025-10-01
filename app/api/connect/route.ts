@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
     }
     // Optionally, update user with device info, last connected, etc.
     return NextResponse.json({ success: true, userId: user.userId });
-  } catch (err) {
+  } catch (_err) {
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

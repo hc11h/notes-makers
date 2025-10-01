@@ -6,8 +6,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/components/ui/dialog"
 import { ConnectTokenButton } from "@/components/ConnectTokenButton";
 
 export default function ErrorScreen({ error, onRetry }: { error: string, onRetry: () => void }) {

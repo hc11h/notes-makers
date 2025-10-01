@@ -11,7 +11,7 @@ interface ProfileDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   userId: string;
-  error?: any;
+  error?: unknown;
 }
 
 export function ProfileDialog({ open, onOpenChange, userId, error }: ProfileDialogProps) {
