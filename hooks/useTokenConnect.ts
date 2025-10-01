@@ -21,7 +21,6 @@ export function useTokenConnect() {
         toast.error(data.error || "Invalid or expired token.");
         setError(data.error || "Invalid or expired token.");
         setLoading(false);
-        setTimeout(() => router.replace("/error"), 1200);
         return false;
       }
       const data = await res.json();
@@ -34,7 +33,6 @@ export function useTokenConnect() {
       toast.error("Server error. Try again.");
       setError("Server error. Try again.");
       setLoading(false);
-      setTimeout(() => router.replace("/error"), 1200);
       return false;
     }
   }
