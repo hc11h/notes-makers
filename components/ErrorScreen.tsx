@@ -1,5 +1,5 @@
 "use client"
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,8 @@ import {
   DialogTitle,
   DialogDescription,
   DialogFooter,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
+import { ConnectTokenButton } from "@/components/ConnectTokenButton";
 
 export default function ErrorScreen({ error, onRetry }: { error: string, onRetry: () => void }) {
   return (
@@ -17,10 +18,11 @@ export default function ErrorScreen({ error, onRetry }: { error: string, onRetry
           <DialogTitle>Error</DialogTitle>
           <DialogDescription>{error}</DialogDescription>
         </DialogHeader>
-        <DialogFooter>
-          <Button onClick={onRetry}>Create New Account</Button>
-        </DialogFooter>
+        <div className="flex flex-col gap-3 mt-2">
+          <ConnectTokenButton />
+          <Button onClick={onRetry} variant="secondary">Create New Account</Button>
+        </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
