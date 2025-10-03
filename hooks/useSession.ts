@@ -14,12 +14,20 @@ export function useUser() {
   useEffect(() => {
     const storedToken = sessionStorage.getItem("user_token")
     if (!storedToken) {
-      toast.error("No user token found. Auth failed.")
-      setError("No user token found.")
-      setLoading(false)
-      router.replace("/error")
+      toast.info("No user token found. Creating a new user...");
+
+      // Call async createUser and handle toast on success/fail
+      createUser().then((success: boolean) => {
+        if (success) {
+          toast.success("User created successfully!")
+        } else {
+          toast.error("Failed to create user.")
+        }
+      })
+
       return
     }
+
     fetch(`/api/user?token=${storedToken}`)
       .then(res => {
         if (!res.ok) throw new Error("Invalid token")
@@ -34,27 +42,31 @@ export function useUser() {
         toast.error("Invalid or expired user token. Auth failed.")
         setError("Invalid or expired user session.")
         setLoading(false)
-        router.replace("/error")
+        // router.replace("/error")
       })
   }, [])
 
-  function createUser() {
+  // Make createUser async and return a boolean
+  async function createUser(): Promise<boolean> {
     setLoading(true)
-    fetch("/api/user", { method: "POST" })
-      .then(res => res.json())
-      .then(data => {
-        sessionStorage.setItem("user_token", data.token)
-        setUserId(data.userId)
-        setToken(data.token)
-        setError(null)
-        setLoading(false)
-        router.replace("/")
-      })
-      .catch(() => {
-        toast.error("Failed to create user.")
-        setError("Failed to create user.")
-        setLoading(false)
-      })
+    try {
+      const res = await fetch("/api/user", { method: "POST" })
+      const data = await res.json()
+
+      sessionStorage.setItem("user_token", data.token)
+      setUserId(data.userId)
+      setToken(data.token)
+      setError(null)
+      setLoading(false)
+      router.replace("/")
+
+      return true
+    } catch (err) {
+      toast.error("Failed to create user.")
+      setError("Failed to create user.")
+      setLoading(false)
+      return false
+    }
   }
 
   return { userId, token, error, loading, createUser }
